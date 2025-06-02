@@ -19,22 +19,13 @@ chmod +x /usr/sbin/update-grub'
 
     # Edit /etc/default/grub to set GRUB_THEME
     echo "Modifying /etc/default/grub to set GRUB_THEME..."
-    pkexec bash -c '
+        pkexec bash -c '
         GRUB_FILE="/etc/default/grub"
         THEME_LINE="GRUB_THEME=\"/usr/share/grub/themes/hyde/theme.txt\""
-        # Check if GRUB_THEME= line exists
-        if grep -q "^GRUB_THEME=" "$GRUB_FILE"; then
-            # Replace the line
-            sed -i "s|^GRUB_THEME=.*|'"$THEME_LINE"'|" "$GRUB_FILE"
-        else
-            # Insert the line after the line starting with #GRUB_THEME
-            # If #GRUB_THEME line not found, append to the end
-            if grep -q "^#GRUB_THEME" "$GRUB_FILE"; then
-                sed -i "/^#GRUB_THEME/ a $THEME_LINE" "$GRUB_FILE"
-            else
-                echo "$THEME_LINE" >> "$GRUB_FILE"
-            fi
-        fi
+        # Remove any existing GRUB_THEME lines (commented or not)
+        sed -i "/^#\?GRUB_THEME=/d" "$GRUB_FILE"
+        # Add the correct GRUB_THEME line
+        echo "$THEME_LINE" >> "$GRUB_FILE"
     '
     exit 0
 fi
