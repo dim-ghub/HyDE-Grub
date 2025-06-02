@@ -1,6 +1,13 @@
 # HyDE-Grub
 A grub theme generator for HyDE
 
+## Presetup
+
+Install dependencies
+```bash
+sudo pacman -Sy python python-numpy python-pillow bash polkit grub sudo python imagemagick coreutils grep findutils --needed
+```
+
 ## Setup
 
 Make the scripts executable
