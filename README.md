@@ -3,9 +3,9 @@ A grub theme generator for HyDE
 
 ## Setup
 
-Make the script executable
+Make the scripts executable
 ```bash
-chmod +x ~/.config/hyde/wallbash/scripts/grub.sh
+chmod +x ~/.config/hyde/wallbash/scripts/grub.sh ; chmod +x ~/.config/hyde/wallbash/scripts/recolor.py
 ```
 
 Run the setup command
