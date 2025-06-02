@@ -19,14 +19,23 @@ chmod +x /usr/sbin/update-grub'
 
     # Edit /etc/default/grub to set GRUB_THEME
     echo "Modifying /etc/default/grub to set GRUB_THEME..."
-        pkexec bash -c '
+    pkexec bash -c '
         GRUB_FILE="/etc/default/grub"
         THEME_LINE="GRUB_THEME=\"/usr/share/grub/themes/hyde/theme.txt\""
-        # Remove any existing GRUB_THEME lines (commented or not)
         sed -i "/^#\?GRUB_THEME=/d" "$GRUB_FILE"
-        # Add the correct GRUB_THEME line
         echo "$THEME_LINE" >> "$GRUB_FILE"
     '
+
+    # Create symbolic link from user config to GRUB theme directory
+    echo "Linking $HOME/.config/hyde/wallbash/grub-theme/hyde to /usr/share/grub/themes/hyde..."
+    pkexec bash -c '
+        THEME_SRC="'$HOME'/.config/hyde/wallbash/grub-theme/hyde"
+        THEME_DST="/usr/share/grub/themes/hyde"
+        rm -rf "$THEME_DST"
+        ln -s "$THEME_SRC" "$THEME_DST"
+        echo "Symlink created: $THEME_DST -> $THEME_SRC"
+    '
+
     exit 0
 fi
 
