@@ -1,2 +1,2 @@
-$HOME/.cache/hyde/wallbash/grub.txt
+$HOME/.cache/hyde/wallbash/grub.txt|hyprctl dispatch exec '~/.config/hyde/wallbash/scripts/grub.sh'
 #<wallbash_2xa2>
