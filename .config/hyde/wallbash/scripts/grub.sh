@@ -7,7 +7,7 @@ if [[ "$1" == "-s" ]]; then
         pkexec bash -c 'cat > /usr/sbin/update-grub <<EOF
 #!/bin/sh
 set -e
-exec grub-mkconfig -o /boot/grub/grub.cfg "$@"
+exec grub-mkconfig -o /boot/grub/grub.cfg "\$@"
 EOF
 chmod +x /usr/sbin/update-grub'
         USERNAME=$(whoami)
@@ -22,19 +22,33 @@ chmod +x /usr/sbin/update-grub'
     pkexec bash -c '
         GRUB_FILE="/etc/default/grub"
         THEME_LINE="GRUB_THEME=\"/usr/share/grub/themes/hyde/theme.txt\""
+        # Remove any existing GRUB_THEME lines (commented or not)
         sed -i "/^#\?GRUB_THEME=/d" "$GRUB_FILE"
+        # Add the correct GRUB_THEME line
         echo "$THEME_LINE" >> "$GRUB_FILE"
     '
 
-    # Create symbolic link from user config to GRUB theme directory
+    # Create symbolic link to GRUB theme directory
     echo "Linking $HOME/.config/hyde/wallbash/grub-theme/hyde to /usr/share/grub/themes/hyde..."
+    THEME_SRC="$HOME/.config/hyde/wallbash/grub-theme/hyde"
     pkexec bash -c '
-        THEME_SRC="'$HOME'/.config/hyde/wallbash/grub-theme/hyde"
+        THEME_SRC="$1"
         THEME_DST="/usr/share/grub/themes/hyde"
-        rm -rf "$THEME_DST"
+
+        if [ -L "$THEME_DST" ]; then
+            echo "Removing existing symlink at $THEME_DST"
+            rm "$THEME_DST"
+        elif [ -d "$THEME_DST" ] && [ ! "$(ls -A "$THEME_DST")" ]; then
+            echo "Removing empty directory at $THEME_DST"
+            rmdir "$THEME_DST"
+        elif [ -e "$THEME_DST" ]; then
+            echo "Error: $THEME_DST exists and is not a symlink or empty directory."
+            exit 1
+        fi
+
         ln -s "$THEME_SRC" "$THEME_DST"
         echo "Symlink created: $THEME_DST -> $THEME_SRC"
-    '
+    ' root "$THEME_SRC"
 
     exit 0
 fi
